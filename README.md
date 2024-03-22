@@ -24,7 +24,9 @@ Below is a list of requirements you must follow to achieve credit for this assig
     - `c<0` and `k>0`
     - `c>k`
     - `k<0`
-- You are not permitted to include any files or libraries other than `#include <stdio.h>` and `#include <stdlib.h>`.
+- You are only allow to include the following libraries
+    - `#include <stdio.h>`
+    - `#include <stdlib.h>`
 - You are not permitted to make any changes to the `main` function.
 - You are not permitted to make any changes to the `factorial` function.
 - Do not change the function signature `int binom(int k, int c)`
