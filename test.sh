@@ -1,7 +1,7 @@
 # Verify Test File Has Not Been Altered
 file="test.sh"
 # The expected SHA256 sum
-expected_sha256="your_expected_sha256_sum"
+expected_sha256="36eea116b8a9d301216496b6f2fc4ed333c85c6ebe88b429edc77253a2e28417"
 actual_sha256=$(sha256sum "$file" | cut -d ' ' -f 1)
 
 # Compare the actual SHA256 sum to the expected one
