@@ -2,7 +2,7 @@
 file="test.sh"
 # The expected SHA256 sum
 expected_sha256="24757673208b858c1f407807cce11590033db08a32df38254d87c9c2e1466449"
-actual_sha256=$(tail -n +15 test.sh | shasum -a 256 | cut -d ' ' -f 1)
+actual_sha256=$(tail -n +15 test.sh | sha256sum | cut -d ' ' -f 1)
 
 # Compare the actual SHA256 sum to the expected one
 if [ "$actual_sha256" == "$expected_sha256" ]; then
