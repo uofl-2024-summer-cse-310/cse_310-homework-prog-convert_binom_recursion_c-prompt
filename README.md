@@ -29,6 +29,20 @@ Below is a list of requirements you must follow to achieve credit for this assig
     - `#include <stdlib.h>`
 - You are not permitted to make any changes to the `main` function.
 - You are not permitted to make any changes to the `factorial` function.
-- Do not change the function signature `int binom(int k, int c)`
-- You must modify the function `binomial_coefficient` to be a recursive function. Wikipedia has a recursive formula that you an use (https://en.wikipedia.org/wiki/Binomial_coefficient)
+- You are not permitted to make any changes to the `makefile`.
+- Do not change the function signature `int binom(int k, int c)`.
+- You must modify the function `binomial_coefficient` to be a recursive function. Wikipedia has a recursive formula that you can use (https://en.wikipedia.org/wiki/Binomial_coefficient)
 - The program must be concise. The source code file must be less than 700 bytes.
+
+
+# Makefile
+
+You will notice the makefile has the targets listed below.
+
+- `build`: Compiles the `binomial_coefficient.c` source code file using `gcc` and outputs an executable named `program`.
+- `clean`: Deletes the `program` executable and the `test.sh` script. It depends on the `delete-test` target.
+- `delete-test`: Deletes the `test.sh` script.
+- `download-test`: Downloads the `test.sh` script from a specified URL using curl.
+- `test`: Runs the `test.sh` script. It first cleans up any previous builds and test scripts, downloads the latest test script, and builds the program.
+
+Running the terminal command `make test` will perform the same test as the GitHub workflow actions (autograder).
