@@ -1,0 +1,122 @@
+name: Autograding Tests
+'on':
+- push
+- workflow_dispatch
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Delete Makefile
+      run: rm -f Makefile
+    - name: Download Makefile
+      run: curl -o Makefile https://raw.githubusercontent.com/education/classroom-autograding/main/Makefile
+    - name: Delete Tests
+      run: make delete-test
+    - name: Download Test File
+      run: make download-test
+    - name: Build The Program
+      run: make build 
+    - name: Verify only two libraries have been included
+      id: verify-only-two-libraries-have-been-included
+      uses: education/autograding-io-grader@v1
+      with:
+        test-name: Verify only two libraries have been included
+        setup-command: ''
+        command: grep -c "#include" binomial_coefficient.c
+        input: ''
+        expected-output: '2'
+        comparison-method: contains
+        timeout: 10
+        max-score: 10
+    - name: 'Verify #include <stdio.h>'
+      id: verify-include-stdio-h
+      uses: education/autograding-io-grader@v1
+      with:
+        test-name: 'Verify #include <stdio.h>'
+        setup-command: ''
+        command: grep -c "stdio.h" binomial_coefficient.c
+        input: ''
+        expected-output: '1'
+        comparison-method: contains
+        timeout: 10
+        max-score: 10
+    - name: 'Verify #include <stdlib.h>'
+      id: verify-include-stdlib-h
+      uses: education/autograding-io-grader@v1
+      with:
+        test-name: 'Verify #include <stdlib.h>'
+        setup-command: ''
+        command: grep -c "stdlib.h" binomial_coefficient.c
+        input: ''
+        expected-output: '1'
+        comparison-method: contains
+        timeout: 10
+        max-score: 10
+    - name: Verify File Is Less than 750 bytes long
+      id: verify-file-is-less-than-750-bytes-long
+      uses: education/autograding-io-grader@v1
+      with:
+        test-name: Verify File Is Less than 750 bytes long
+        setup-command: ''
+        command: file="binomial_coefficient.c"; max_size=750; size=$(ls -l $file |
+          awk '{print $5}'); if [ $size -lt $max_size ]; then echo "File size is under
+          the limit."; else echo "File size is over the limit."; fi
+        input: ''
+        expected-output: File size is under the limit.
+        comparison-method: contains
+        timeout: 10
+        max-score: 10
+    - name: Verify Main has not been changed
+      id: verify-main-has-not-been-changed
+      uses: education/autograding-io-grader@v1
+      with:
+        test-name: Verify Main has not been changed
+        setup-command: ''
+        command: cat binomial_coefficient.c
+        input: ''
+        expected-output: printf("There are %d ways to choose %d items from a set of
+          %d items.\n", binom(k, c), c, k);
+        comparison-method: contains
+        timeout: 10
+        max-score: 10
+    - name: Verify factorial has not been changed
+      id: verify-factorial-has-not-been-changed
+      uses: education/autograding-io-grader@v1
+      with:
+        test-name: Verify factorial has not been changed
+        setup-command: ''
+        command: cat binomial_coefficient.c
+        input: ''
+        expected-output: return k * factorial(k - 1);
+        comparison-method: contains
+        timeout: 10
+        max-score: 10
+    - name: Verify Several Outputs
+      id: verify-several-outputs
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: Verify Several Outputs
+        setup-command: ''
+        command: make test
+        timeout: 10
+        max-score: 200
+    - name: Autograding Reporter
+      uses: education/autograding-grading-reporter@v1
+      env:
+        VERIFY-ONLY-TWO-LIBRARIES-HAVE-BEEN-INCLUDED_RESULTS: "${{steps.verify-only-two-libraries-have-been-included.outputs.result}}"
+        VERIFY-INCLUDE-STDIO-H_RESULTS: "${{steps.verify-include-stdio-h.outputs.result}}"
+        VERIFY-INCLUDE-STDLIB-H_RESULTS: "${{steps.verify-include-stdlib-h.outputs.result}}"
+        VERIFY-FILE-IS-LESS-THAN-750-BYTES-LONG_RESULTS: "${{steps.verify-file-is-less-than-750-bytes-long.outputs.result}}"
+        VERIFY-MAIN-HAS-NOT-BEEN-CHANGED_RESULTS: "${{steps.verify-main-has-not-been-changed.outputs.result}}"
+        VERIFY-FACTORIAL-HAS-NOT-BEEN-CHANGED_RESULTS: "${{steps.verify-factorial-has-not-been-changed.outputs.result}}"
+        VERIFY-SEVERAL-OUTPUTS_RESULTS: "${{steps.verify-several-outputs.outputs.result}}"
+      with:
+        runners: verify-only-two-libraries-have-been-included,verify-include-stdio-h,verify-include-stdlib-h,verify-file-is-less-than-750-bytes-long,verify-main-has-not-been-changed,verify-factorial-has-not-been-changed,verify-several-outputs
