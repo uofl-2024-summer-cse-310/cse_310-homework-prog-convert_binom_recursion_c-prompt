@@ -7,7 +7,10 @@ int factorial(int k) {
 }
 
 int binom(int k, int c) {
-    return factorial(k) / (factorial(c) * factorial(k - c));
+    if (c < 0 || k<0 || c>k) { return 0; }
+    if (c == 0 || c == k) { return 1; }
+    // return factorial(k) / (factorial(c) * factorial(k - c));
+    return binom(k - 1, c - 1) + binom(k - 1, c);
 }
 
 int main(int argc, char *argv[]) {
